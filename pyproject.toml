@@ -5,7 +5,10 @@ description = "PoW mining, Casper FFG slashing and an asyncio gossip network (La
 readme = "README.md"
 requires-python = ">=3.11"
 # Standard library only: hashlib, asyncio, multiprocessing, statistics, random.
-dependencies = []
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
+]
 
 [dependency-groups]
 dev = [
