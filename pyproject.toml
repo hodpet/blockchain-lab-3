@@ -1,0 +1,33 @@
+[project]
+name = "consensus-lab"
+version = "1.0.0"
+description = "PoW mining, Casper FFG slashing and an asyncio gossip network (Lab 03)"
+readme = "README.md"
+requires-python = ">=3.11"
+# Standard library only: hashlib, asyncio, multiprocessing, statistics, random.
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.6",
+]
+
+# Application, not a distributable library. See ../README.md for why editable
+# installs are avoided in this repository.
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
