@@ -152,12 +152,18 @@ def demo_pos() -> None:
     absent = set(range(40))  # more than a third are offline: no 2/3 quorum
     present = [i for i in range(64) if i not in absent]
 
-    for epoch in range(1, 12):
+    # CHANGED: Run for 100 epochs to allow the leak to finish
+    for epoch in range(1, 100):
         target = Checkpoint(epoch, f"root-{epoch}")
-        source = Checkpoint(epoch - 1, f"root-{epoch - 1}") if epoch > 1 else state.genesis_checkpoint
+        
+        # CHANGED: Validators must link from the currently justified checkpoint
+        source = state.current_justified 
+        
         state.attest_many(honest_attestations(state, source, target, validators=present))
         result = state.process_epoch(epoch)
-        if epoch in (1, 5, 8, 11):
+        
+        # CHANGED: Print checkpoints at 20, 40, 60, and then every epoch around the recovery (80-85)
+        if epoch in (20, 40, 60) or (80 <= epoch <= 85):
             active_share = (
                 sum(state.validators[i].effective_balance for i in present)
                 / state.total_active_balance
@@ -167,13 +173,6 @@ def demo_pos() -> None:
                 f"leaked={result['inactivity_leak'] / GWEI:>7.3f} ETH  "
                 f"voting share={active_share:.1%}"
             )
-    print()
-    print("  Casper chooses safety over liveness: without a 2/3 quorum it simply stops")
-    print("  finalising. The leak restores liveness by shrinking absent validators'")
-    print("  stake until the participating remainder passes 2/3 again. Honest nodes")
-    print("  stranded by a partition also lose -- that is the price of recovering.")
-    print()
-    print(state.summary())
     print()
 
 
